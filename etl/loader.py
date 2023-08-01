@@ -65,7 +65,7 @@ def transform(row):
         "actors": [dict(id=act['person_id'], name=act['person_name']) for act in row['persons'] if
                    act['person_role'] == 'actor'],
         "writers": [dict(id=act['person_id'], name=act['person_name']) for act in row['persons'] if
-                    act['person_role'] == 'writer'],
+                   act['person_role'] == 'writer']
     }
 
 def generate_actions(storage: BaseStorage, cur):
