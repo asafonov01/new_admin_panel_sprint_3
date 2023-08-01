@@ -45,3 +45,33 @@ services:
       - 80:80
     depends_on:
       - service
+
+  es:
+    image: elasticsearch:7.17.8
+    environment:
+      discovery.type: single-node
+      ES_JAVA_OPTS: "-Xmx512m -Xms512m"
+    depends_on:
+      - backend
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://${ELASTIC_HOST}:${ELASTIC_PORT}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - es_datas:/usr/share/elasticsearch/data
+    restart: always
+
+
+
+  etl:
+     build: postgres_to_es
+     env_file:
+     - "./.env"
+     depends_on:
+        es:
+          condition: service_healthy
+  volumes:
+        - checkpoint:/opt/etl/results
+  entrypoint: [ "bash", "./docker-entrypoint.sh" ]
+  restart: always
